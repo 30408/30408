@@ -1,0 +1,16 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+st.title("데이터 시각화 웹앱")
+
+url = "https://drive.google.com/uc?export=download&id=1pwfON6doXyH5p7AOBJPfiofYlni0HVVY"              
+df = pd.read_csv(url)
+
+st.write("데이터 미리보기:")
+st.dataframe(df)
+
+# 시각화
+fig = px.bar(df, x='이름', y='값')  # 열 이름에 맞게 수정
+st.plotly_chart(fig)
+  
