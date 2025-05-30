@@ -7,6 +7,22 @@ from sklearn.cluster import KMeans
 import folium
 from streamlit_folium import st_folium
 
+@st.cache_data
+def load_data():
+    url = "https://drive.google.com/uc?export=download&id=1UW9paFlCJMtjK8ct0P_RrG6vU-Dlyrf2"
+    response = requests.get(url)
+    csv_data = StringIO(response.text)
+    
+    # 첫 500자 출력해서 내용 파악
+    st.text("파일 내용 (미리보기):")
+    st.text(csv_data.getvalue()[:500])
+    
+    # CSV 로딩
+    df = pd.read_csv(csv_data, engine="python", on_bad_lines="skip")  # 또는 sep=";" 시도
+    df.columns = [col.strip().lower() for col in df.columns]
+    return df
+
+
 st.title("📍 배송 위치 자동 군집 분석 (Folium 지도 시각화)")
 
 # 구글 드라이브 링크에서 데이터 불러오기
