@@ -1,26 +1,43 @@
 import pandas as pd
 import folium
 
-# CSV나 DataFrame 형식으로 되어 있다고 가정
-data = pd.read_csv("your_data.csv")  # 또는 직접 DataFrame 생성
+# 1. 좌표 데이터 직접 정의
+data = pd.DataFrame({
+    'Num': list(range(1, 25)),
+    'Latitude': [
+        37.8977653, 37.8882707, 37.8952398, 37.8882047, 37.8883023, 37.8886849,
+        37.8883608, 37.8888554, 37.8900211, 37.8901964, 37.8884915, 37.8886134,
+        37.8892127, 37.8879714, 37.8865366, 37.8890043, 37.8889751, 37.8891403,
+        37.8887908, 37.8897163, 37.8887016, 37.8895331, 37.8896452, 37.8898822
+    ],
+    'Longitude': [
+        127.0636487, 127.0565151, 127.0590916, 127.0562475, 127.0560964, 127.0558076,
+        127.0560574, 127.0557376, 127.0551641, 127.0548326, 127.0559168, 127.0555194,
+        127.0551172, 127.0565122, 127.0568765, 127.0556608, 127.0553643, 127.0554335,
+        127.0558213, 127.0553787, 127.0550978, 127.0548041, 127.0550788, 127.055428
+    ]
+})
 
-# 평균 위치를 중심으로 지도 생성
+# 2. 중심 좌표 계산
 center_lat = data['Latitude'].mean()
 center_lon = data['Longitude'].mean()
-map_ = folium.Map(location=[center_lat, center_lon], zoom_start=12)
 
-# 데이터 포인트를 지도에 표시
+# 3. 지도 생성
+map_ = folium.Map(location=[center_lat, center_lon], zoom_start=17)
+
+# 4. CircleMarker 추가
 for _, row in data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=3,
+        radius=4,
         color='blue',
         fill=True,
-        fill_opacity=0.7
+        fill_color='blue',
+        fill_opacity=0.7,
+        popup=f"Num: {row['Num']}"
     ).add_to(map_)
 
-# 지도 출력 (Jupyter Notebook 사용 시)
-map_
-# 또는 저장
-map_.save("map.html")
+# 5. 지도 저장
+map_.save("삼숭동_좌표지도.html")
+print("지도가 '삼숭동_좌표지도.html'로 저장되었습니다.")
 
