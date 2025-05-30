@@ -67,3 +67,4 @@ for _, row in X_result.iterrows():
 # 지도 출력
 st.subheader("🌍 군집 결과 지도")
 st_folium(m, width=700, height=500)
+st.write("데이터프레임 컬럼 목록:", df.columns.tolist())
