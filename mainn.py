@@ -1,9 +1,9 @@
 import pandas as pd
 import folium
 
-# 1. 좌표 데이터 직접 정의
+# 1. 좌표 데이터 직접 생성
 data = pd.DataFrame({
-    'Num': list(range(1, 25)),
+    'Num': range(1, 25),
     'Latitude': [
         37.8977653, 37.8882707, 37.8952398, 37.8882047, 37.8883023, 37.8886849,
         37.8883608, 37.8888554, 37.8900211, 37.8901964, 37.8884915, 37.8886134,
@@ -18,26 +18,27 @@ data = pd.DataFrame({
     ]
 })
 
-# 2. 중심 좌표 계산
+# 2. 지도 중심점 계산 (위도, 경도 평균)
 center_lat = data['Latitude'].mean()
 center_lon = data['Longitude'].mean()
 
-# 3. 지도 생성
-map_ = folium.Map(location=[center_lat, center_lon], zoom_start=17)
+# 3. 지도 생성 (줌레벨 17)
+m = folium.Map(location=[center_lat, center_lon], zoom_start=17)
 
-# 4. CircleMarker 추가
-for _, row in data.iterrows():
+# 4. 각 좌표에 파란색 원형 마커 추가
+for i, row in data.iterrows():
     folium.CircleMarker(
         location=[row['Latitude'], row['Longitude']],
-        radius=4,
+        radius=5,
         color='blue',
         fill=True,
         fill_color='blue',
         fill_opacity=0.7,
-        popup=f"Num: {row['Num']}"
-    ).add_to(map_)
+        popup=f"번호: {row['Num']}"
+    ).add_to(m)
 
 # 5. 지도 저장
-map_.save("삼숭동_좌표지도.html")
-print("지도가 '삼숭동_좌표지도.html'로 저장되었습니다.")
+m.save("삼숭동_지도.html")
+
+print("지도 생성 완료! '삼숭동_지도.html' 파일을 확인하세요.")
 
