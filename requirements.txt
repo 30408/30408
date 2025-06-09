@@ -1,7 +1,5 @@
 streamlit
 pandas
-requests
-scikit-learn
-folium
-streamlit-folium
-
+matplotlib
+seaborn
+plotly
