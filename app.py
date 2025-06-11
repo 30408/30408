@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import os
 
 # 페이지 설정은 최상단, 첫 번째 Streamlit 명령어로!
-st.set_page_config(page_title="CO 배출량 분석", layout="wide")
+st.set_page_config(page_title="생물성 연소 배출량 분석", layout="wide")
 
-st.title("🚗 지역별 및 연소 종류별 CO 배출량 분석")
+st.title("🚗 지역별 생물성 연소 배출량 분석")
 
 # 파일 경로 지정 (실제 경로에 맞게 수정)
 csv_path = os.path.join("data", "일산화탄소_CO__배출량_20250609093209.csv")
@@ -28,7 +28,7 @@ df = df.rename(columns={df.columns[0]: '구분(1)'})
 df = df[df['구분(1)'] != '구분(1)']
 
 # --------- 1. 지역별 배출량 분석 ---------
-st.header("📍 지역별 전체 CO 배출량 순위")
+st.header("📍 지역별 전체 생물성 연소 배출량 순위")
 
 # 지역별 총합 기준 정렬
 region_df = df[['구분(1)', '2022.9']].sort_values(by='2022.9', ascending=False)
@@ -39,13 +39,13 @@ st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 top10_region = region_df.head(10)
 fig1, ax1 = plt.subplots()
 ax1.bar(top10_region['구분(1)'], top10_region['2022.9'], color='skyblue')
-ax1.set_title("상위 10개 지역의 CO 배출량")
+ax1.set_title("상위 10개 지역의 생물성 연소 배출량")
 ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
 st.pyplot(fig1)
 
 # --------- 2. 연소 종류별 배출량 분석 ---------
-st.header("🔥 연소 종류별 전체 CO 배출량 순위")
+st.header("🔥 연소 종류별 전체 생물성 연소 배출량 순위")
 
 # 연소 항목만 추출
 category_columns = df.columns.drop(['구분(1)', '2022.9'])
