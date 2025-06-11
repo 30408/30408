@@ -1,7 +1,7 @@
-cd 30408/일산화탄소_CO__배출량_20250609093209.csv # 예: cd Documents/co-emission-dashboard
+import pandas as pd
 
-git add data/일산화탄소_CO__배출량.csv
+# CSV 파일 읽기 (파일 경로가 정확해야 함)
+df = pd.read_csv("일산화탄소_CO__배출량_20250609093209.csv")
 
-git commit -m "Add CO CSV file to data folder"
-
-git push origin main
+# 데이터 확인
+print(df.head())
