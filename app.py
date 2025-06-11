@@ -1,42 +1,56 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 
-# CSV 경로 지정
-csv_path = os.path.join("data", "일산화탄소_CO__배출량_20250609093209.csv")
+st.set_page_config(page_title="CO 배출량 분석", layout="wide")
 
-# CSV 읽기 (인코딩 오류 방지)
-df = pd.read_csv(csv_path, encoding='cp949')
+st.title("🚗 지역별 및 연소 종류별 CO 배출량 분석")
 
-st.title("🌍 지역별 일산화탄소(CO) 배출량 및 연소 종류 분석")
+# 파일 업로드
+uploaded_file = st.file_uploader("CSV 파일을 업로드하세요", type=["csv"])
 
-# 지역 목록 생성
-regions = df['지역'].unique()
-selected_region = st.selectbox("분석할 지역을 선택하세요:", regions)
+if uploaded_file is not None:
+    # CSV 읽기
+    df = pd.read_csv(uploaded_file)
 
-# 선택한 지역 필터링
-region_df = df[df['지역'] == selected_region]
+    # 첫 번째 열 이름을 '지역'으로 변경
+    df = df.rename(columns={df.columns[0]: '지역'})
 
-# 지역의 총 CO 배출량 계산
-total_emission = region_df['배출량'].sum()
-st.metric(label=f"{selected_region}의 총 CO 배출량", value=f"{total_emission:,.2f} 톤")
+    # --------- 1. 지역별 배출량 분석 ---------
+    st.header("📍 지역별 전체 CO 배출량 순위")
 
-# 연소 종류별 배출량
-grouped_fuel = region_df.groupby('연소종류')['배출량'].sum().sort_values(ascending=False)
+    region_df = df[['지역', '배출원대분류 합계']].sort_values(by='배출원대분류 합계', ascending=False)
 
-# 가장 많이 배출한 연소 종류
-most_common_fuel = grouped_fuel.idxmax()
-most_common_value = grouped_fuel.max()
+    st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
-st.subheader(f"🔥 {selected_region}에서 가장 많은 CO를 배출한 연소 카테고리:")
-st.write(f"→ **{most_common_fuel}**: {most_common_value:,.2f} 톤")
+    # 막대 그래프 (상위 10개 지역)
+    top10_region = region_df.head(10)
+    fig1, ax1 = plt.subplots()
+    ax1.bar(top10_region['지역'], top10_region['배출원대분류 합계'], color='skyblue')
+    ax1.set_title("상위 10개 지역의 CO 배출량")
+    ax1.set_ylabel("배출량 (t)")
+    plt.xticks(rotation=45)
+    st.pyplot(fig1)
 
-# 막대 그래프 시각화
-st.subheader(f"📊 {selected_region}의 연소 종류별 CO 배출량")
+    # --------- 2. 연소 종류별 배출량 분석 ---------
+    st.header("🔥 연소 종류별 전체 CO 배출량 순위")
 
-fig, ax = plt.subplots()
-grouped_fuel.plot(kind='bar', ax=ax, color='teal')
-ax.set_ylabel("배출량 (톤)")
-ax.set_title(f"{selected_region} - 연소 종류별 일산화탄소 배출량")
-st.pyplot(fig)
+    # '지역'과 '배출원대분류 합계'를 제외한 연소 종류 컬럼 합산
+    category_columns = df.columns[2:]
+    category_sum = df[category_columns].sum().sort_values(ascending=False)
+
+    category_df = pd.DataFrame({
+        "연소 종류": category_sum.index,
+        "총 배출량": category_sum.values
+    })
+
+    st.dataframe(category_df.reset_index(drop=True), use_container_width=True)
+
+    # 막대 그래프
+    fig2, ax2 = plt.subplots(figsize=(10, 5))
+    ax2.bar(category_sum.index, category_sum.values, color='salmon')
+    ax2.set_title("연소 종류별 총 CO 배출량")
+    ax2.set_ylabel("배출량 (t)")
+    plt.xticks(rotation=45)
+    st.pyplot(fig2)
+
