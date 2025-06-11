@@ -16,7 +16,7 @@ regions = df['지역'].unique()
 selected_region = st.selectbox("분석할 지역을 선택하세요:", regions)
 
 # 선택한 지역 필터링
-region_df = df[df['지역'] == selected_region]
+region_df = df[df['구분(1)'] == selected_region]
 
 # 지역의 총 CO 배출량 계산
 total_emission = region_df['배출량'].sum()
