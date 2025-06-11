@@ -33,20 +33,20 @@ df = pd.read_csv(file_path)
 df = df.rename(columns={df.columns[0]: '구분(1)'})
 
 # '전국' 행 제거
-df = df[df['지역'] != '구분(1)']
+df = df[df['구분(1)'] != '구분(1)']
 
 # --------- 1. 지역별 배출량 분석 ---------
 st.header("📍 지역별 전체 CO 배출량 순위")
 
 # 지역별 총합 기준 정렬
-region_df = df[['지역', '배출원대분류 합계']].sort_values(by='배출원대분류 합계', ascending=False)
+region_df = df[['구분(1)', '배출원대분류 합계']].sort_values(by='배출원대분류 합계', ascending=False)
 
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
 # 막대 그래프 (상위 10개 지역)
 top10_region = region_df.head(10)
 fig1, ax1 = plt.subplots()
-ax1.bar(top10_region['지역'], top10_region['배출원대분류 합계'], color='skyblue')
+ax1.bar(top10_region['구분(1)'], top10_region['배출원대분류 합계'], color='skyblue')
 ax1.set_title("상위 10개 지역의 CO 배출량")
 ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
