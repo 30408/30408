@@ -30,10 +30,10 @@ file_path = "일산화탄소_CO__배출량_20250609093209.csv"
 df = pd.read_csv(file_path)
 
 # 열 이름 정리
-df = df.rename(columns={df.columns[0]: '지역'})
+df = df.rename(columns={df.columns[0]: '구분(1)'})
 
 # '전국' 행 제거
-df = df[df['지역'] != '전국']
+df = df[df['지역'] != '구분(1)']
 
 # --------- 1. 지역별 배출량 분석 ---------
 st.header("📍 지역별 전체 CO 배출량 순위")
@@ -56,7 +56,7 @@ st.pyplot(fig1)
 st.header("🔥 연소 종류별 전체 CO 배출량 순위")
 
 # 연소 항목만 추출
-category_columns = df.columns.drop(['지역', '배출원대분류 합계'])
+category_columns = df.columns.drop(['구분(1)', '배출원대분류 합계'])
 category_sum = df[category_columns].sum().sort_values(ascending=False)
 
 category_df = pd.DataFrame({
