@@ -12,7 +12,7 @@ df = pd.read_csv(csv_path, encoding='cp949')
 st.title("🌍 지역별 일산화탄소(CO) 배출량 및 연소 종류 분석")
 
 # 지역 목록 생성
-regions = df['지역'].unique()
+regions = df['구분(1)'].unique()
 selected_region = st.selectbox("분석할 지역을 선택하세요:", regions)
 
 # 선택한 지역 필터링
