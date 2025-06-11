@@ -27,10 +27,10 @@ df = pd.read_csv(csv_path, encoding='cp949')
 st.title("🌍 지역별 일산화탄소(CO) 배출량 및 연소 종류 분석")
 
 # 지역별 총 배출량 집계 및 내림차순 정렬
-total_emission_by_region = df.groupby('구분(1)')['배출량'].sum().sort_values(ascending=False)
+total_emission_by_region = df.groupby('구분(1)')['배출원대분류 합계'].sum().sort_values(ascending=False)
 
 st.subheader("🏆 지역별 총 CO 배출량 순위")
-st.dataframe(total_emission_by_region.to_frame().rename(columns={'배출량': '총 배출량 (톤)'}))
+st.dataframe(total_emission_by_region.to_frame().rename(columns={'배출원대분류 합계': '총 배출량 (톤)'}))
 
 # 각 지역별로 연소 종류별 배출량 순위 보여주기
 for region in total_emission_by_region.index:
@@ -38,7 +38,7 @@ for region in total_emission_by_region.index:
     st.subheader(f"📍 {region} - 연소 종류별 CO 배출량 순위")
 
     region_df = df[df['구분(1)'] == region]
-    grouped_fuel = region_df.groupby('연소종류')['배출량'].sum().sort_values(ascending=False)
+    grouped_fuel = region_df.groupby('연소종류')['배출원대분류 합계'].sum().sort_values(ascending=False)
 
     # 표 출력
     st.table(grouped_fuel.to_frame().rename(columns={'배출량': '배출량 (톤)'}))
