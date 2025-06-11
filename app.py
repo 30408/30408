@@ -31,14 +31,14 @@ df = df[df['구분(1)'] != '구분(1)']
 st.header("📍 지역별 전체 CO 배출량 순위")
 
 # 지역별 총합 기준 정렬
-region_df = df[['구분(1)', '배출원대분류 합계']].sort_values(by='배출원대분류 합계', ascending=False)
+region_df = df[['구분(1)', '2022']].sort_values(by='2022', ascending=False)
 
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
 # 막대 그래프 (상위 10개 지역)
 top10_region = region_df.head(10)
 fig1, ax1 = plt.subplots()
-ax1.bar(top10_region['구분(1)'], top10_region['배출원대분류 합계'], color='skyblue')
+ax1.bar(top10_region['구분(1)'], top10_region['2022'], color='skyblue')
 ax1.set_title("상위 10개 지역의 CO 배출량")
 ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
@@ -48,7 +48,7 @@ st.pyplot(fig1)
 st.header("🔥 연소 종류별 전체 CO 배출량 순위")
 
 # 연소 항목만 추출
-category_columns = df.columns.drop(['구분(1)', '배출원대분류 합계'])
+category_columns = df.columns.drop(['구분(1)', '2022'])
 category_sum = df[category_columns].sum().sort_values(ascending=False)
 
 category_df = pd.DataFrame({
