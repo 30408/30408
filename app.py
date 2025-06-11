@@ -31,7 +31,7 @@ df = df[df['구분(1)'] != '구분(1)']
 st.header("📍 지역별 전체 CO 배출량 순위")
 
 # 지역별 총합 기준 정렬
-region_df = df[['구분(1)', '2022.9']].sort_values(by='2022,9', ascending=False)
+region_df = df[['구분(1)', '2022.9']].sort_values(by='2022.9', ascending=False)
 
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
