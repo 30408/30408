@@ -28,18 +28,18 @@ df = df.rename(columns={df.columns[0]: '구분(1)'})
 df = df[df['구분(1)'] != '구분(1)']  # 제목 행 제거
 
 # ✅ '2022.9' 숫자형으로 변환 (쉼표 제거 후 float으로)
-df['2022.9'] = df['2022.9'].astype(str).str.replace(",", "")
-df['2022.9'] = pd.to_numeric(df['2022.9'], errors='coerce')
+df['생물성 연소'] = df['생물성 연소'].astype(str).str.replace(",", "")
+df['생물성 연소'] = pd.to_numeric(df['생물성 연소'], errors='coerce')
 
 # --------- 1. 지역별 분석 ---------
 st.header("📍 지역별 전체 생물성 연소 배출량 순위")
 
-region_df = df[['구분(1)', '2022.9']].dropna().sort_values(by='2022.9', ascending=False)
+region_df = df[['구분(1)', '생물성 연소']].dropna().sort_values(by='2022.9', ascending=False)
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
 top10_region = region_df.head(10)
 fig1, ax1 = plt.subplots()
-ax1.bar(top10_region['구분(1)'], top10_region['2022.9'], color='skyblue')
+ax1.bar(top10_region['구분(1)'], top10_region['생물성 연소'], color='skyblue')
 ax1.set_title("상위 10개 지역의 생물성 연소 배출량")
 ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
@@ -48,7 +48,7 @@ st.pyplot(fig1)
 # --------- 2. 연소 종류별 분석 ---------
 st.header("🔥 연소 종류별 전체 생물성 연소 배출량 순위")
 
-category_columns = df.columns.drop(['구분(1)', '2022.9'])
+category_columns = df.columns.drop(['구분(1)', '생물성 연소'])
 # 쉼표 제거 및 숫자 변환
 for col in category_columns:
     df[col] = df[col].astype(str).str.replace(",", "")
