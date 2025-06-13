@@ -69,3 +69,4 @@ ax2.set_title("연소 종류별 총 CO 배출량")
 ax2.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
 st.pyplot(fig2)
+
