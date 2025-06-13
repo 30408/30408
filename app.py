@@ -34,7 +34,7 @@ df['생물성 연소'] = pd.to_numeric(df['생물성 연소'], errors='coerce')
 # --------- 1. 지역별 분석 ---------
 st.header("📍 지역별 전체 생물성 연소 배출량 순위")
 
-region_df = df[['구분(1)', '생물성 연소']].dropna().sort_values(by='생물성 연소', cending=False)
+region_df = df[['구분(1)', '생물성 연소']].dropna().sort_values(by='생물성 연소', ascending=False)
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
 top10_region = region_df.head(10)
