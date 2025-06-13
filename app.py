@@ -1,17 +1,19 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 import os
 
-# 페이지 설정은 최상단, 첫 번째 Streamlit 명령어로!
-st.set_page_config(page_title="생물성 연소 배출량 분석", layout="wide")
+# ✅ 한글 폰트 설정 (Windows 기준. Mac이나 Linux는 다르게 해야 함)
+matplotlib.rcParams['font.family'] = 'Malgun Gothic'
+plt.rcParams['axes.unicode_minus'] = False  # 마이너스 깨짐 방지
 
+st.set_page_config(page_title="생물성 연소 배출량 분석", layout="wide")
 st.title("🚗 지역별 생물성 연소 배출량 분석")
 
-# 파일 경로 지정 (실제 경로에 맞게 수정)
+# ✅ 고정된 경로의 CSV 불러오기
 csv_path = os.path.join("data", "일산화탄소_CO__배출량_20250609093209.csv")
 
-# CSV 불러오기 (인코딩 문제 해결)
 try:
     df = pd.read_csv(csv_path, encoding="cp949")
     st.success("CSV 파일을 성공적으로 불러왔습니다!")
@@ -19,23 +21,22 @@ try:
 except Exception as e:
     st.error("CSV 파일을 불러오는 데 문제가 발생했습니다.")
     st.exception(e)
-    st.stop()  # 에러 발생 시 이후 실행 중단
+    st.stop()
 
-# 열 이름 정리
+# ✅ 열 이름 정리
 df = df.rename(columns={df.columns[0]: '구분(1)'})
+df = df[df['구분(1)'] != '구분(1)']  # 제목 행 제거
 
-# '구분(1)' 컬럼에서 제목 행 제거 (만약 헤더가 2중으로 들어간 경우)
-df = df[df['구분(1)'] != '구분(1)']
+# ✅ '2022.9' 숫자형으로 변환 (쉼표 제거 후 float으로)
+df['2022.9'] = df['2022.9'].astype(str).str.replace(",", "")
+df['2022.9'] = pd.to_numeric(df['2022.9'], errors='coerce')
 
-# --------- 1. 지역별 배출량 분석 ---------
+# --------- 1. 지역별 분석 ---------
 st.header("📍 지역별 전체 생물성 연소 배출량 순위")
 
-# 지역별 총합 기준 정렬
-region_df = df[['구분(1)', '2022.9']].sort_values(by='2022.9', ascending=False)
-
+region_df = df[['구분(1)', '2022.9']].dropna().sort_values(by='2022.9', ascending=False)
 st.dataframe(region_df.reset_index(drop=True), use_container_width=True)
 
-# 막대 그래프 (상위 10개 지역)
 top10_region = region_df.head(10)
 fig1, ax1 = plt.subplots()
 ax1.bar(top10_region['구분(1)'], top10_region['2022.9'], color='skyblue')
@@ -44,11 +45,15 @@ ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
 st.pyplot(fig1)
 
-# --------- 2. 연소 종류별 배출량 분석 ---------
+# --------- 2. 연소 종류별 분석 ---------
 st.header("🔥 연소 종류별 전체 생물성 연소 배출량 순위")
 
-# 연소 항목만 추출
 category_columns = df.columns.drop(['구분(1)', '2022.9'])
+# 쉼표 제거 및 숫자 변환
+for col in category_columns:
+    df[col] = df[col].astype(str).str.replace(",", "")
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+
 category_sum = df[category_columns].sum().sort_values(ascending=False)
 
 category_df = pd.DataFrame({
@@ -58,12 +63,9 @@ category_df = pd.DataFrame({
 
 st.dataframe(category_df.reset_index(drop=True), use_container_width=True)
 
-# 막대 그래프
 fig2, ax2 = plt.subplots(figsize=(10, 5))
 ax2.bar(category_sum.index, category_sum.values, color='salmon')
 ax2.set_title("연소 종류별 총 CO 배출량")
 ax2.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
 st.pyplot(fig2)
-
-
