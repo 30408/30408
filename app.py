@@ -45,28 +45,40 @@ ax1.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
 st.pyplot(fig1)
 
-# --------- 2. 연소 종류별 분석 ---------
-st.header("🔥 연소 종류별 전체 생물성 연소 배출량 순위")
+# --------- 2. 각 지역별 최다 연소 종류 분석 ---------
+st.header("🔥 지역별로 가장 많이 배출한 연소 종류")
 
-category_columns = df.columns.drop(['구분(1)', '생물성 연소'])
-# 쉼표 제거 및 숫자 변환
-for col in category_columns:
-    df[col] = df[col].astype(str).str.replace(",", "")
-    df[col] = pd.to_numeric(df[col], errors='coerce')
+# NaN 제거
+region_max_category = []
 
-category_sum = df[category_columns].sum().sort_values(ascending=False)
+for idx, row in df.iterrows():
+    region = row['구분(1)']
+    category_values = row[category_columns]
+    max_col = category_values.idxmax()
+    max_value = category_values[max_col]
+    region_max_category.append({
+        "지역": region,
+        "가장 많이 배출한 연소 종류": max_col,
+        "배출량 (t)": max_value
+    })
 
-category_df = pd.DataFrame({
-    "연소 종류": category_sum.index,
-    "총 배출량": category_sum.values
-})
+region_max_df = pd.DataFrame(region_max_category)
+region_max_df = region_max_df.sort_values(by="배출량 (t)", ascending=False)
 
-st.dataframe(category_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(region_max_df.reset_index(drop=True), use_container_width=True)
 
-fig2, ax2 = plt.subplots(figsize=(10, 5))
-ax2.bar(category_sum.index, category_sum.values, color='salmon')
-ax2.set_title("연소 종류별 총 CO 배출량")
-ax2.set_ylabel("배출량 (t)")
+# 상위 10개 지역만 시각화
+top10_max = region_max_df.head(10)
+fig3, ax3 = plt.subplots(figsize=(10, 5))
+bars = ax3.bar(top10_max['지역'], top10_max['배출량 (t)'], color='mediumseagreen')
+ax3.set_title("지역별 최다 배출 연소 종류 (상위 10개)")
+ax3.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
-st.pyplot(fig2)
+
+# 각 막대 위에 연소 종류 이름 표시
+for bar, label in zip(bars, top10_max['가장 많이 배출한 연소 종류']):
+    height = bar.get_height()
+    ax3.text(bar.get_x() + bar.get_width()/2, height, label, ha='center', va='bottom', fontsize=8, rotation=45)
+
+st.pyplot(fig3)
 
