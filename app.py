@@ -57,7 +57,7 @@ for idx, row in df.iterrows():
     max_col = category_values.idxmax()
     max_value = category_values[max_col]
     region_max_category.append({
-        "지역": region,
+        "구분(1)": region,
         "가장 많이 배출한 연소 종류": max_col,
         "배출량 (t)": max_value
     })
@@ -70,7 +70,7 @@ st.dataframe(region_max_df.reset_index(drop=True), use_container_width=True)
 # 상위 10개 지역만 시각화
 top10_max = region_max_df.head(10)
 fig3, ax3 = plt.subplots(figsize=(10, 5))
-bars = ax3.bar(top10_max['지역'], top10_max['배출량 (t)'], color='mediumseagreen')
+bars = ax3.bar(top10_max['구분(1)'], top10_max['배출량 (t)'], color='mediumseagreen')
 ax3.set_title("지역별 최다 배출 연소 종류 (상위 10개)")
 ax3.set_ylabel("배출량 (t)")
 plt.xticks(rotation=45)
