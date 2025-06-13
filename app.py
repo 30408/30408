@@ -55,9 +55,19 @@ region_max_category = []
 
 for idx, row in df.iterrows():
     region = row['구분(1)']
-    category_values = row[category_columns]
-    max_col = category_values.astype(float).idxmax()
-    max_value = float(category_values[max_col])
+    
+    # 안전하게 숫자로 변환 (문자열, 쉼표 등 제거 후 float로)
+    category_values = row[category_columns].apply(
+        lambda x: pd.to_numeric(str(x).replace(",", ""), errors='coerce')
+    )
+    
+    # NaN만 있는 경우 제외
+    if category_values.dropna().empty:
+        continue
+
+    max_col = category_values.idxmax()
+    max_value = category_values[max_col]
+    
     region_max_category.append({
         "지역": region,
         "가장 많이 배출한 연소 종류": max_col,
